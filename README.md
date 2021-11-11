@@ -1,1 +1,0 @@
-# IRTM_Proiect_1
