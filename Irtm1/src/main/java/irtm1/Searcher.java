@@ -1,7 +1,10 @@
+package irtm1;
+
 import java.io.File;
 import java.io.IOException;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -20,7 +23,7 @@ public class Searcher
     public Searcher(String indexDirectoryPath) throws IOException
     {
         Directory indexDirectory = FSDirectory.open(new File(indexDirectoryPath));
-        indexSearcher = new IndexSearcher(indexDirectory);
+        indexSearcher = new IndexSearcher(IndexReader.open(indexDirectory));
         queryParser = new QueryParser(Version.LUCENE_36,
                 LuceneConstants.CONTENTS,
                 new StandardAnalyzer(Version.LUCENE_36));

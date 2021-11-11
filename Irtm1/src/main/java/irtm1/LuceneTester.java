@@ -1,11 +1,14 @@
+package irtm1;
+
 import java.io.IOException;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 public class LuceneTester
 {
-    String indexDir = "/home/bogdan/PycharmProjects/Irtm1/Index"; String dataDir = "/home/bogdan/PycharmProjects/Irtm1/Data";
+    String indexDir = "./Index"; String dataDir = "./Data";
     Indexer indexer;
     Searcher searcher;
     public static void main(String[] args)

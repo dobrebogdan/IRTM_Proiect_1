@@ -1,3 +1,5 @@
+package irtm1;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
@@ -6,7 +8,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.Directory;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
@@ -16,11 +18,10 @@ public class Indexer
     private IndexWriter writer;
     public Indexer(String indexDirectoryPath) throws IOException
     {
-        Directory indexDirectory = FSDirectory.open(new File(indexDirectoryPath));
-
-        writer = new IndexWriter(indexDirectory,
-                new StandardAnalyzer(Version.LUCENE_36),true,
-                IndexWriter.MaxFieldLength.UNLIMITED);
+        FSDirectory dir = FSDirectory.open(new File(indexDirectoryPath));
+        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
+        writer = new IndexWriter(dir, config);
+        writer.deleteAll();
     }
     public void close() throws IOException
     {
