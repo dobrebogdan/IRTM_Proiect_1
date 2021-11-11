@@ -52,8 +52,6 @@ public class Indexer
     }
     public int createIndex(String dataDirPath, FileFilter filter) throws IOException
     {
-        System.out.println("!!!");
-        System.out.println(new File(dataDirPath).toPath());
         File[] files = new File(dataDirPath).listFiles();
         System.out.println(files);
         for (File file : files)

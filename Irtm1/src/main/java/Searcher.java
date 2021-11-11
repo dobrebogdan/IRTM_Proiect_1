@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -31,7 +30,7 @@ public class Searcher
         query = queryParser.parse(searchQuery);
         return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
     }
-    public Document getDocument(ScoreDoc scoreDoc) throws CorruptIndexException, IOException
+    public Document getDocument(ScoreDoc scoreDoc) throws IOException
     {
         return indexSearcher.doc(scoreDoc.doc);
     }
