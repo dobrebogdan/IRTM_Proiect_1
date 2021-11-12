@@ -2,24 +2,26 @@ package irtm1;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Scanner;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
-
 
 public class Indexer
 {
     private IndexWriter writer;
     public Indexer(String indexDirectoryPath) throws IOException
     {
-        FSDirectory dir = FSDirectory.open(new File(indexDirectoryPath));
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
+        FSDirectory dir = FSDirectory.open(Path.of(indexDirectoryPath));
+        IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
+        //config.setCodec(Codec.forName("Lucene410Codec"));
         writer = new IndexWriter(dir, config);
         writer.deleteAll();
     }
@@ -31,15 +33,13 @@ public class Indexer
     {
         Document document = new Document();
 
-        Field contentField = new Field(LuceneConstants.CONTENTS, new FileReader(file));
+        Scanner scan = new Scanner(file);
+        scan.useDelimiter("\\Z");
+        String fileContent = scan.next();
+        Field contentField = new TextField(LuceneConstants.CONTENTS, fileContent, Field.Store.YES);
+        Field fileNameField = new TextField(LuceneConstants.FILE_NAME, file.getName(), Field.Store.YES);
+        Field filePathField = new TextField(LuceneConstants.FILE_PATH, file.getCanonicalPath(), Field.Store.YES);
 
-        Field fileNameField = new Field(LuceneConstants.FILE_NAME,
-                file.getName(),
-                Field.Store.YES,Field.Index.NOT_ANALYZED);
-
-        Field filePathField = new Field(LuceneConstants.FILE_PATH,
-                file.getCanonicalPath(),
-                Field.Store.YES,Field.Index.NOT_ANALYZED);
         document.add(contentField);
         document.add(fileNameField);
         document.add(filePathField);
@@ -54,7 +54,6 @@ public class Indexer
     public int createIndex(String dataDirPath, FileFilter filter) throws IOException
     {
         File[] files = new File(dataDirPath).listFiles();
-        System.out.println(files);
         for (File file : files)
         {
             if(!file.isDirectory() && !file.isHidden() && file.exists() && file.canRead() && filter.accept(file) )
@@ -62,6 +61,6 @@ public class Indexer
                 indexFile(file);
             }
         }
-        return writer.numDocs();
+        return writer.getDocStats().numDocs;
     }
 }

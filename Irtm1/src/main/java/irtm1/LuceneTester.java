@@ -1,11 +1,11 @@
 package irtm1;
 
 import java.io.IOException;
-
 import org.apache.lucene.document.Document;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+
 public class LuceneTester
 {
     String indexDir = "./Index"; String dataDir = "./Data";
@@ -51,6 +51,5 @@ public class LuceneTester
             Document doc = searcher.getDocument(scoreDoc);
             System.out.println("File: " + doc.get(LuceneConstants.FILE_PATH));
         }
-        searcher.close();
     }
 }
