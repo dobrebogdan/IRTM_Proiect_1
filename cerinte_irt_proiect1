@@ -1,0 +1,9 @@
+1) Indexer si Searcher
+2) Doar documente txt
+3) Apache Lucerne/Tika (doar java deci?)
+4) Limba Romana (trebuie ales un encoding care suporta diacritice, preferabil utf8)
+5) Scriem tot in documentatie tot + cele de mai sus
+6) Procesari necesare: eliminare diacritice, eliminare stop words, stemming
+7) Echivalenta intre cuvintele cu si fara diacritice
+8) Atentie la interactiunea intre diacrtice si stop words
+ 
