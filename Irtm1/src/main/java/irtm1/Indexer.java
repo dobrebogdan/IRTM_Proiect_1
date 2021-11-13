@@ -5,7 +5,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Scanner;
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -16,12 +15,11 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Indexer
 {
-    private IndexWriter writer;
+    private final IndexWriter writer;
     public Indexer(String indexDirectoryPath) throws IOException
     {
         FSDirectory dir = FSDirectory.open(Path.of(indexDirectoryPath));
         IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
-        //config.setCodec(Codec.forName("Lucene410Codec"));
         writer = new IndexWriter(dir, config);
         writer.deleteAll();
     }

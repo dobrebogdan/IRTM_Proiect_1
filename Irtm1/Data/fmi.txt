@@ -1,0 +1,9 @@
+Specializarile de master respecta domeniile traditionale din matematica pura si aplicata: Algebra, Geometry and Cryptography (în limba engleză), Advanced studies in mathematics (în limba engleză), Matematica didactică, Analiză matematică și aplicații, Probabilități și statistică în finanțe și științe. Masterul interdisciplinar de Biostatistica (cu taxa) se afla la intersectia domeniilor Matematica, Informatica si Farmacie.
+
+Domeniul Informatică
+Are o unica specializare – Informatică – care include cursuri suport de matematica, cursuri fundamentale de informatica: structuri de date si algoritmi, limbaje de programare (C, C++, Java, C#, Haskell), baze de date (SQL, PL/SQL, Oracle), dezvoltare de aplicatii web (HTML, CSS, Java Script, XML, JSP, ASP.NET), administrare de retele (Unix, Windows) si o bogata activitate de realizarea de proiecte individuale sau in echipa.
+
+Specializarile de master sunt orientate pe șapte directii de dezvoltare științifică si profesională: Artificial intelligence (în limba engleză), Baze de date şi tehnologii software, Data science (în limba engleză), Inginerie software,  Natural Language Processing (în limba engleză), Security and applied logic (în limba engleză), Sisteme distribuite.
+
+Domeniul Calculatoare si Tehnologia Informatiei
+Are o unica specializare – Tehnologia Informatiei – cu durata de 4 ani. Programul de studiu integreaza cursuri fundamentale si de specialitate de matematica, informatica si fizica. Pachetul de cursuri urm.reste formarea unor deprinderi practice si competente de a lucra cu echipamente tehnologice complexe prin lucrari de laborator si practica de specialitate (in anul IV).

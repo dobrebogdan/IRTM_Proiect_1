@@ -18,13 +18,13 @@ public class LuceneTester
         {
             tester = new LuceneTester();
             tester.createIndex();
-            tester.search("bogdan");
+            tester.search("samsung");
         }
-        catch (IOException e)
+        catch (ParseException e)
         {
             e.printStackTrace();
         }
-        catch (ParseException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
