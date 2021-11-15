@@ -1,5 +1,6 @@
-/home/bogdan/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/Searcher.java
-/home/bogdan/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/TextFileFilter.java
-/home/bogdan/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/LuceneTester.java
-/home/bogdan/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/LuceneConstants.java
-/home/bogdan/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/Indexer.java
+/home/bogdan/PycharmProjects/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/LuceneTester.java
+/home/bogdan/PycharmProjects/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/CustomFileFilter.java
+/home/bogdan/PycharmProjects/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/Indexer.java
+/home/bogdan/PycharmProjects/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/LuceneUtils.java
+/home/bogdan/PycharmProjects/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/Searcher.java
+/home/bogdan/PycharmProjects/IRTM_Proiect_1/Irtm1/src/main/java/irtm1/LuceneConstants.java

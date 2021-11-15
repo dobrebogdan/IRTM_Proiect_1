@@ -14,6 +14,8 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
 
 import static irtm1.LuceneConstants.DATA_DIR;
 import static irtm1.LuceneConstants.INDEX_DIR;
@@ -33,13 +35,41 @@ public class Indexer
     {
         writer.close();
     }
-    private Document getDocument(File file) throws IOException
-    {
-        Document document = new Document();
-
+    private String getTxtContent(File file) throws IOException {
         Scanner scan = new Scanner(file);
         scan.useDelimiter("\\Z");
         String fileContent = scan.next();
+        return fileContent;
+    }
+
+
+
+    private String getDocContent(File file) throws IOException, TikaException {
+        System.out.println(file.exists());
+        return new Tika().parseToString(file);
+    }
+
+
+    private Document getDocument(File file) throws IOException, TikaException
+    {
+        Document document = new Document();
+
+        String path = file.getPath().toLowerCase();
+        String fileContent = "";
+        if (path.endsWith(".txt")) {
+            fileContent = getTxtContent(file);
+        }
+        if (path.endsWith(".doc") || path.endsWith(".docx")) {
+            fileContent = getDocContent(file);
+            System.out.println("DOC CONTENT:");
+            System.out.println(fileContent);
+        }
+        if(path.endsWith(".pdf")) {
+            fileContent = getDocContent(file);
+            System.out.println("PDF CONTENT:");
+            System.out.println(fileContent);
+        }
+
         fileContent = LuceneUtils.removeDiacritics(fileContent);
 
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
@@ -55,13 +85,13 @@ public class Indexer
         document.add(filePathField);
         return document;
     }
-    private void indexFile(File file) throws IOException
+    private void indexFile(File file) throws IOException, TikaException
     {
         System.out.println("Indexing "+file.getCanonicalPath());
         Document document = getDocument(file);
         writer.addDocument(document);
     }
-    public int createIndex(String dataDirPath, FileFilter filter) throws IOException
+    public int createIndex(String dataDirPath, FileFilter filter) throws IOException, TikaException
     {
         File[] files = new File(dataDirPath).listFiles();
         for (File file : files)
@@ -74,11 +104,11 @@ public class Indexer
         return writer.getDocStats().numDocs;
     }
 
-    public static void main(String [] args) throws IOException{
+    public static void main(String [] args) throws IOException, TikaException {
         Indexer indexer = new Indexer(INDEX_DIR);
         int numIndexed;
         long startTime = System.currentTimeMillis();
-        numIndexed = indexer.createIndex(DATA_DIR, new TextFileFilter());
+        numIndexed = indexer.createIndex(DATA_DIR, new CustomFileFilter());
         long endTime = System.currentTimeMillis();
         indexer.close();
         System.out.println(numIndexed+" File indexed, time taken: " +(endTime-startTime)+" ms");
