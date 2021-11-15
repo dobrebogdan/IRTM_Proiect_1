@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Scanner;
+import org.apache.lucene.analysis.ro.RomanianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -12,6 +14,10 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
+
+import static irtm1.LuceneConstants.DATA_DIR;
+import static irtm1.LuceneConstants.INDEX_DIR;
+import static irtm1.LuceneUtils.analyze;
 
 public class Indexer
 {
@@ -34,7 +40,13 @@ public class Indexer
         Scanner scan = new Scanner(file);
         scan.useDelimiter("\\Z");
         String fileContent = scan.next();
-        Field contentField = new TextField(LuceneConstants.CONTENTS, fileContent, Field.Store.YES);
+        fileContent = LuceneUtils.removeDiacritics(fileContent);
+
+        RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
+        // This function tokenizez, stems and removes stopwords
+        List<String> results = analyze(fileContent, romanianAnalyzer);
+        String fileWords = String.join(" ", results);
+        Field contentField = new TextField(LuceneConstants.CONTENTS, fileWords, Field.Store.YES);
         Field fileNameField = new TextField(LuceneConstants.FILE_NAME, file.getName(), Field.Store.YES);
         Field filePathField = new TextField(LuceneConstants.FILE_PATH, file.getCanonicalPath(), Field.Store.YES);
 
@@ -60,5 +72,15 @@ public class Indexer
             }
         }
         return writer.getDocStats().numDocs;
+    }
+
+    public static void main(String [] args) throws IOException{
+        Indexer indexer = new Indexer(INDEX_DIR);
+        int numIndexed;
+        long startTime = System.currentTimeMillis();
+        numIndexed = indexer.createIndex(DATA_DIR, new TextFileFilter());
+        long endTime = System.currentTimeMillis();
+        indexer.close();
+        System.out.println(numIndexed+" File indexed, time taken: " +(endTime-startTime)+" ms");
     }
 }

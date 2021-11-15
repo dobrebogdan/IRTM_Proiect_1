@@ -6,4 +6,5 @@
 6) Procesari necesare: eliminare diacritice, eliminare stop words, stemming
 7) Echivalenta intre cuvintele cu si fara diacritice
 8) Atentie la interactiunea intre diacrtice si stop words
- 
+9) Trebuie sa mearga pe documente de tip txt, doc, docx si pdf
+
