@@ -2,7 +2,6 @@ package irtm1;
 
 import java.io.IOException;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.tika.exception.TikaException;
 
 public class LuceneTester
 {
@@ -13,7 +12,7 @@ public class LuceneTester
             Indexer.main(null);
             Searcher.main(null);
         }
-        catch (IOException | ParseException | TikaException e)
+        catch (IOException | ParseException e)
         {
             e.printStackTrace();
         }

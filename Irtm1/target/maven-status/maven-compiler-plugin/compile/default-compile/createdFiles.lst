@@ -1,2 +1,6 @@
 irtm1/CustomFileFilter.class
 irtm1/Indexer.class
+irtm1/LuceneConstants.class
+irtm1/Searcher.class
+irtm1/LuceneTester.class
+irtm1/LuceneUtils.class
