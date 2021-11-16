@@ -98,8 +98,9 @@ public class Indexer
         fileContent = LuceneUtils.removeDiacritics(fileContent);
 
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
-        // This function tokenizes, stems and removes stopwords
+
         List<String> results = analyze(fileContent, romanianAnalyzer);
+
         String fileWords = String.join(" ", results);
         Field contentField = new TextField(LuceneConstants.CONTENTS, fileWords, Field.Store.YES);
         Field fileNameField = new TextField(LuceneConstants.FILE_NAME, file.getName(), Field.Store.YES);

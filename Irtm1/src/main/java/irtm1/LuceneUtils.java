@@ -26,5 +26,4 @@ public class LuceneUtils {
         }
         return result;
     }
-
 }

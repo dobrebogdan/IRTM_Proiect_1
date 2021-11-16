@@ -3,6 +3,7 @@ package irtm1;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.lucene.analysis.ro.RomanianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -42,11 +43,13 @@ public class Searcher
     }
 
     public static void main(String[] args) throws IOException, ParseException{
-        String text = "Ceva text foarte interesant aici sau altceva legat de porcii Acestora tânăr";
+        Scanner scanner= new Scanner(System.in);
+        String text = scanner.nextLine();
         text = LuceneUtils.removeDiacritics(text);
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
-        // This function tokenizez, stems and removes stopwords
+
         List<String> results = analyze(text, romanianAnalyzer);
+
         String searchQuery = String.join(" ", results);
         Searcher searcher = new Searcher(INDEX_DIR);
         long startTime = System.currentTimeMillis();
