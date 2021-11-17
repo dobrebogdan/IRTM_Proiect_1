@@ -1,6 +1,9 @@
 package irtm1;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
@@ -20,29 +23,29 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
-import static irtm1.LuceneConstants.DATA_DIR;
-import static irtm1.LuceneConstants.INDEX_DIR;
-import static irtm1.LuceneUtils.analyze;
+import static irtm1.Constants.DATA_DIR;
+import static irtm1.Constants.INDEX_DIR;
+import static irtm1.Utils.analyze;
 
 public class Indexer
 {
-    private final IndexWriter writer;
+    private final IndexWriter indexWriter;
     public Indexer(String indexDirectoryPath) throws IOException
     {
         FSDirectory dir = FSDirectory.open(Path.of(indexDirectoryPath));
         IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
-        writer = new IndexWriter(dir, config);
-        writer.deleteAll();
+        indexWriter = new IndexWriter(dir, config);
+        indexWriter.deleteAll();
     }
     public void close() throws IOException
     {
-        writer.close();
+        indexWriter.close();
     }
     private String getTxtContent(File file) {
         try {
-            Scanner scan = new Scanner(file);
-            scan.useDelimiter("\\Z");
-            return scan.next();
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter("\\Z");
+            return scanner.next();
         }
         catch (IOException e) {
             return "";
@@ -52,8 +55,8 @@ public class Indexer
     private String getDocContent(File file) {
         try {
             XWPFDocument document = new XWPFDocument(OPCPackage.open(new FileInputStream(file)));
-            XWPFWordExtractor ext = new XWPFWordExtractor(document);
-            return ext.getText();
+            XWPFWordExtractor xwpfWordExtractor = new XWPFWordExtractor(document);
+            return xwpfWordExtractor.getText();
         }
         catch(Exception e) {
             return "";
@@ -62,21 +65,21 @@ public class Indexer
 
     private String getPdfContent(File file) {
         try {
-            PDFParser parser = new PDFParser(new FileInputStream(file));
-            parser.parse();
-            COSDocument cosDoc = parser.getDocument();
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            PDDocument pdDoc = new PDDocument(cosDoc);
-            return pdfStripper.getText(pdDoc);
+            PDFParser pdfParser = new PDFParser(new FileInputStream(file));
+            pdfParser.parse();
+            COSDocument cosDocument = pdfParser.getDocument();
+            PDFTextStripper pdfTextStripper = new PDFTextStripper();
+            PDDocument pdDocument = new PDDocument(cosDocument);
+            return pdfTextStripper.getText(pdDocument);
         }
         catch(Exception e) {
             return "";
         }
-
     }
 
-    private Document getDocument(File file) throws IOException
+    private void indexFile(File file) throws IOException
     {
+        System.out.println("Indexing "+file.getCanonicalPath());
         Document document = new Document();
 
         String path = file.getPath().toLowerCase();
@@ -95,27 +98,18 @@ public class Indexer
             System.out.println(fileContent);
         }
 
-        fileContent = LuceneUtils.removeDiacritics(fileContent);
+        fileContent = Utils.removeDiacritics(fileContent);
 
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
-
         List<String> results = analyze(fileContent, romanianAnalyzer);
 
         String fileWords = String.join(" ", results);
-        Field contentField = new TextField(LuceneConstants.CONTENTS, fileWords, Field.Store.YES);
-        Field fileNameField = new TextField(LuceneConstants.FILE_NAME, file.getName(), Field.Store.YES);
-        Field filePathField = new TextField(LuceneConstants.FILE_PATH, file.getCanonicalPath(), Field.Store.YES);
+        Field contentField = new TextField(Constants.CONTENTS, fileWords, Field.Store.YES);
+        Field filePathField = new TextField(Constants.FILE_PATH, file.getCanonicalPath(), Field.Store.YES);
 
         document.add(contentField);
-        document.add(fileNameField);
         document.add(filePathField);
-        return document;
-    }
-    private void indexFile(File file) throws IOException
-    {
-        System.out.println("Indexing "+file.getCanonicalPath());
-        Document document = getDocument(file);
-        writer.addDocument(document);
+        indexWriter.addDocument(document);
     }
     public int createIndex(String dataDirPath, FileFilter filter) throws IOException
     {
@@ -127,7 +121,7 @@ public class Indexer
                 indexFile(file);
             }
         }
-        return writer.getDocStats().numDocs;
+        return indexWriter.getDocStats().numDocs;
     }
 
     public static void main(String [] args) throws IOException

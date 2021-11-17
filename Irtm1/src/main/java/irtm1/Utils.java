@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LuceneUtils {
+public class Utils {
 
     public static String removeDiacritics(String text) {
         return text.replace('ă', 'a').replace('â', 'a')

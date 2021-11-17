@@ -19,13 +19,13 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import static irtm1.LuceneConstants.INDEX_DIR;
-import static irtm1.LuceneUtils.analyze;
+import static irtm1.Constants.INDEX_DIR;
+import static irtm1.Utils.analyze;
 
 public class Searcher
 {
     private final IndexSearcher indexSearcher;
-    private final QueryParser queryParser = new QueryParser(LuceneConstants.CONTENTS, new StandardAnalyzer());
+    private final QueryParser queryParser = new QueryParser(Constants.CONTENTS, new StandardAnalyzer());
     public Searcher(String indexDirectoryPath) throws IOException
     {
         Directory indexDirectory = FSDirectory.open(Path.of(indexDirectoryPath));
@@ -35,7 +35,7 @@ public class Searcher
     public TopDocs search(String searchQuery) throws IOException, ParseException
     {
         Query query = queryParser.parse(searchQuery);
-        return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
+        return indexSearcher.search(query, Constants.MAX_SEARCH);
     }
     public Document getDocument(ScoreDoc scoreDoc) throws IOException
     {
@@ -45,7 +45,7 @@ public class Searcher
     public static void main(String[] args) throws IOException, ParseException{
         Scanner scanner= new Scanner(System.in);
         String text = scanner.nextLine();
-        text = LuceneUtils.removeDiacritics(text);
+        text = Utils.removeDiacritics(text);
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
 
         List<String> results = analyze(text, romanianAnalyzer);
@@ -53,13 +53,13 @@ public class Searcher
         String searchQuery = String.join(" ", results);
         Searcher searcher = new Searcher(INDEX_DIR);
         long startTime = System.currentTimeMillis();
-        TopDocs hits = searcher.search(searchQuery);
+        TopDocs topDocs = searcher.search(searchQuery);
         long endTime = System.currentTimeMillis();
-        System.out.println(hits.totalHits + " documents found. Time :" + (endTime - startTime));
-        for(ScoreDoc scoreDoc : hits.scoreDocs)
+        System.out.println(topDocs.totalHits + " documents found. Time :" + (endTime - startTime));
+        for(ScoreDoc scoreDoc : topDocs.scoreDocs)
         {
-            Document doc = searcher.getDocument(scoreDoc);
-            System.out.println("File: " + doc.get(LuceneConstants.FILE_PATH));
+            Document document = searcher.getDocument(scoreDoc);
+            System.out.println("File: " + document.get(Constants.FILE_PATH));
             System.out.println("Score: " + scoreDoc.score);
         }
     }
