@@ -1,10 +1,9 @@
 package irtm1;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Scanner;
-
 import org.apache.lucene.analysis.ro.RomanianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -43,24 +42,31 @@ public class Searcher
     }
 
     public static void main(String[] args) throws IOException, ParseException{
-        Scanner scanner= new Scanner(System.in);
-        String text = scanner.nextLine();
-        text = Utils.removeDiacritics(text);
+        Path filePath = Path.of(Constants.QUERY_PATH);
+        String text = Files.readString(filePath);
+        text = Utils.removePunctuation(Utils.removeDiacritics(text));
+        List<String> nonStopwords = Utils.removeStopwords(text.split(" "));
+
+        text = String.join(" " , nonStopwords);
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
-
         List<String> results = analyze(text, romanianAnalyzer);
-
-        String searchQuery = String.join(" ", results);
-        Searcher searcher = new Searcher(INDEX_DIR);
-        long startTime = System.currentTimeMillis();
-        TopDocs topDocs = searcher.search(searchQuery);
-        long endTime = System.currentTimeMillis();
-        System.out.println(topDocs.totalHits + " documents found. Time :" + (endTime - startTime));
-        for(ScoreDoc scoreDoc : topDocs.scoreDocs)
-        {
-            Document document = searcher.getDocument(scoreDoc);
-            System.out.println("File: " + document.get(Constants.FILE_PATH));
-            System.out.println("Score: " + scoreDoc.score);
+        try {
+            String searchQuery = String.join(" ", results);
+            System.out.println(searchQuery);
+            Searcher searcher = new Searcher(INDEX_DIR);
+            long startTime = System.currentTimeMillis();
+            TopDocs topDocs = searcher.search(searchQuery);
+            long endTime = System.currentTimeMillis();
+            System.out.println(topDocs.totalHits + " documents found. Time :" + (endTime - startTime));
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                Document document = searcher.getDocument(scoreDoc);
+                System.out.println("File: " + document.get(Constants.FILE_PATH));
+                System.out.println("Score: " + scoreDoc.score);
+            }
+        }
+        catch (Exception e) {
+            System.out.println("An exception occurred in the searcher");
+            e.printStackTrace();
         }
     }
 }

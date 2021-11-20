@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Scanner;
 import org.apache.lucene.analysis.ro.RomanianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -43,9 +43,9 @@ public class Indexer
     }
     private String getTxtContent(File file) {
         try {
-            Scanner scanner = new Scanner(file);
-            scanner.useDelimiter("\\Z");
-            return scanner.next();
+            Path filePath = Path.of(file.getPath());
+            String text = Files.readString(filePath);
+            return text;
         }
         catch (IOException e) {
             return "";
@@ -56,7 +56,9 @@ public class Indexer
         try {
             XWPFDocument document = new XWPFDocument(OPCPackage.open(new FileInputStream(file)));
             XWPFWordExtractor xwpfWordExtractor = new XWPFWordExtractor(document);
-            return xwpfWordExtractor.getText();
+            String text = xwpfWordExtractor.getText();
+            xwpfWordExtractor.close();
+            return text;
         }
         catch(Exception e) {
             return "";
@@ -70,7 +72,9 @@ public class Indexer
             COSDocument cosDocument = pdfParser.getDocument();
             PDFTextStripper pdfTextStripper = new PDFTextStripper();
             PDDocument pdDocument = new PDDocument(cosDocument);
-            return pdfTextStripper.getText(pdDocument);
+            String result = pdfTextStripper.getText(pdDocument);
+            pdDocument.close();
+            return result;
         }
         catch(Exception e) {
             return "";
@@ -89,17 +93,15 @@ public class Indexer
         }
         if (path.endsWith(".doc") || path.endsWith(".docx")) {
             fileContent = getDocContent(file);
-            System.out.println("DOC CONTENT:");
-            System.out.println(fileContent);
         }
         if(path.endsWith(".pdf")) {
             fileContent = getPdfContent(file);
-            System.out.println("PDF CONTENT:");
-            System.out.println(fileContent);
         }
 
-        fileContent = Utils.removeDiacritics(fileContent);
+        fileContent = Utils.removePunctuation(Utils.removeDiacritics(fileContent));
+        List<String> nonStopwords = Utils.removeStopwords(fileContent.split(" "));
 
+        fileContent = String.join(" " , nonStopwords);
         RomanianAnalyzer romanianAnalyzer = new RomanianAnalyzer();
         List<String> results = analyze(fileContent, romanianAnalyzer);
 
